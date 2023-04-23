@@ -13,9 +13,8 @@ const Joi = require("joi");
 
 const addBookSchema = Joi.object({
   name: Joi.string().required(),
-  isbn: Joi.number().max(13).required(),
+  isbn: Joi.string().max(13).required(),
   author: Joi.string().required(),
-  borrowed_by: Joi.number().integer().min(0).default(0),
 });
 
 const BookMutations = {
@@ -26,13 +25,12 @@ const BookMutations = {
       type: BookType,
       args: {
         name: { type: GraphQLNonNull(GraphQLString) },
-        isbn: { type: GraphQLNonNull(GraphQLString) },
+        isbn: { type: GraphQLNonNull(GraphQLID) },
         author: { type: GraphQLNonNull(GraphQLString) },
-        borrowed_by: { type: GraphQLInt },
       },
-      async resolve(parent, { name, isbn, author, borrowed_by }, context) {
+      async resolve(parent, { name, isbn, author }, context) {
         // Validate arguments
-        const { error } = addBookSchema.validate(args);
+        const { error } = addBookSchema.validate({ name, isbn, author });
         if (error) {
           throw new Error(`Invalid input: ${error.message}`);
         }
@@ -66,7 +64,7 @@ const BookMutations = {
         // Insert new book into the database
         const bookQuery = {
           text: "INSERT INTO library.books (name, isbn, author, borrowed_by) VALUES ($1, $2, $3, $4) RETURNING *",
-          values: [name, isbn, author, borrowed_by],
+          values: [name, isbn, author, 0],
         };
         const { rows } = await db.query(bookQuery);
 

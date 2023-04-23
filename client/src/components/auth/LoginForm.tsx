@@ -5,19 +5,26 @@ import { useMutation } from "@apollo/client";
 import { useDispatch } from "react-redux";
 import { LOGIN_USER } from "../../mutations/userMutations";
 import { setUser } from "../../features/auth/authSlice";
+import { useSelector } from "react-redux";
 
 interface FormType {
   type: "user" | "admin";
 }
 
 const LoginForm: React.FC<FormType> = ({ type }) => {
+  const navigate = useNavigate();
+  const user = useSelector((state: any) => state.auth.user);
+
+  if (user) {
+    navigate("/");
+  }
+
   const dispatch = useDispatch();
   const [login, setLogin] = useState("");
   const [loginErrored, setLoginErrored] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordErrored, setPasswordErrored] = useState(false);
   const [loginUser, { loading, error }] = useMutation(LOGIN_USER);
-  const navigate = useNavigate();
 
   const handleLogin = async () => {
     if (!login) {
@@ -32,7 +39,9 @@ const LoginForm: React.FC<FormType> = ({ type }) => {
     }
 
     try {
-      const { data } = await loginUser({ variables: { login, password } });
+      const { data } = await loginUser({
+        variables: { login, password, admin: type === "admin" },
+      });
 
       if (data) {
         dispatch(setUser(data.loginUser));

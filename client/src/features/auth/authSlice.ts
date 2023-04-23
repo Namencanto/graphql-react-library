@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../../types/User";
 import { VERIFY_USER } from "../../queries/userQueries";
 import { client } from "../../App";
+import { LOGOUT_USER } from "../../mutations/userMutations";
 
 interface AuthState {
   user: User | null;
@@ -16,6 +17,15 @@ const initialState: AuthState = {
   loading: false,
   error: null,
 };
+
+export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
+  try {
+    await client.mutate({ mutation: LOGOUT_USER });
+    return null;
+  } catch (error) {
+    throw new Error("Something went wrong...");
+  }
+});
 
 export const fetchUser = createAsyncThunk("auth/fetchUser", async () => {
   try {
@@ -63,7 +73,13 @@ const authSlice = createSlice({
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = "action.error.message";
+        state.error = "Something went wrong...";
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.error = null;
       });
   },
 });

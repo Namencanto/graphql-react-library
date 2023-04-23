@@ -27,9 +27,15 @@ const DELETE_CLIENT = gql`
   }
 `;
 
+const LOGOUT_USER = gql`
+  mutation logout {
+    logout
+  }
+`;
+
 const LOGIN_USER = gql`
-  mutation loginUser($login: String!, $password: String!) {
-    loginUser(login: $login, password: $password) {
+  mutation loginUser($login: String!, $password: String!, $admin: Boolean!) {
+    loginUser(login: $login, password: $password, admin: $admin) {
       id
       name
       admin
@@ -37,4 +43,4 @@ const LOGIN_USER = gql`
   }
 `;
 
-export { ADD_USER, DELETE_CLIENT, LOGIN_USER };
+export { ADD_USER, DELETE_CLIENT, LOGIN_USER, LOGOUT_USER };

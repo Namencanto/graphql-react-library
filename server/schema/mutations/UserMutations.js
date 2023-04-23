@@ -103,8 +103,9 @@ const userMutations = {
       args: {
         login: { type: GraphQLNonNull(GraphQLString) },
         password: { type: GraphQLNonNull(GraphQLString) },
+        admin: { type: GraphQLNonNull(GraphQLBoolean) },
       },
-      async resolve(parent, { login, password }, context) {
+      async resolve(parent, { login, password, admin }, context) {
         // Check if user exists in the database
         const { rows } = await db.query(
           "SELECT * FROM library.users WHERE login = $1",
@@ -113,6 +114,11 @@ const userMutations = {
         const user = rows[0];
         if (!user) {
           throw new Error("Invalid login credentials");
+        }
+        if (user.admin !== admin) {
+          throw new Error(
+            `Please login through ${admin ? "user" : "admin"} panel`
+          );
         }
 
         // Check if password is correct

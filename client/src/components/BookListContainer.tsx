@@ -9,7 +9,7 @@ interface Props {
 }
 
 const BookListContainer: React.FC<Props> = ({ userId, availableOnly }) => {
-  const query = userId ? GET_BOOKS : GET_AVAILABLE_BOOKS;
+  const query = availableOnly ? GET_BOOKS : GET_AVAILABLE_BOOKS;
   const variables = userId ? { userId } : {};
 
   const { loading, error, data } = useQuery(query, {
@@ -19,9 +19,7 @@ const BookListContainer: React.FC<Props> = ({ userId, availableOnly }) => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
-  const books = userId ? data.books : data.availableBooks;
-
-  return <BookList books={books} />;
+  return <BookList books={data.getAllBooks} />;
 };
 
 export default BookListContainer;

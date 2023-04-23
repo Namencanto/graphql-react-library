@@ -1,6 +1,16 @@
 import { gql } from "@apollo/client";
 
-const GET_BOsafOKS = gql`
+const ADD_BOOK = gql`
+  mutation addBook($name: String!, $isbn: ID!, $author: String!) {
+    addBook(name: $name, isbn: $isbn, author: $author) {
+      name
+      isbn
+      author
+    }
+  }
+`;
+
+const GET_BOOKS = gql`
   mutation addClient($name: String!, $email: String!, $phone: String!) {
     addClient(name: $name, email: $email, phone: $phone) {
       id
@@ -11,7 +21,7 @@ const GET_BOsafOKS = gql`
   }
 `;
 
-const GsET_AVAILAsBLE_BOOKS = gql`
+const GET_AVAILABLE_BOOKS = gql`
   mutation deleteClient($id: ID!) {
     deleteClient(id: $id) {
       id
@@ -22,4 +32,4 @@ const GsET_AVAILAsBLE_BOOKS = gql`
   }
 `;
 
-export { GET_BOsafOKS, GsET_AVAILAsBLE_BOOKS };
+export { ADD_BOOK, GET_BOOKS, GET_AVAILABLE_BOOKS };

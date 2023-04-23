@@ -4,16 +4,16 @@ import { useEffect, useState } from "react";
 
 interface PrivateRouteProps {
   redirectPath: string;
+  path: string;
+  element: any;
 }
 
 export default function PrivateRoute({
   redirectPath,
   ...props
 }: PrivateRouteProps) {
-  const isAuthenticated = useSelector(
-    (state: any) => state.auth.isAuthenticated
-  );
-  console.log(isAuthenticated);
+  const user = useSelector((state: any) => state.auth.user);
+  console.log(user);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -27,7 +27,7 @@ export default function PrivateRoute({
     return <div>Loading...</div>;
   }
 
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to={redirectPath} />;
   }
 

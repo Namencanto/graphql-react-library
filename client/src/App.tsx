@@ -1,10 +1,9 @@
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
-import { useDispatch } from "react-redux/es/exports";
+import { useDispatch } from "react-redux";
 
 import Routes from "./routes/routes";
-// import LoginForm from "./components/auth/login-form/LoginForm";
 import "./index.css";
 import { useEffect } from "react";
 import { fetchUser } from "./features/auth/authSlice";
@@ -42,10 +41,9 @@ const darkTheme = createTheme({
 });
 
 function App() {
-  const dispatch: ThunkDispatch<any, any, AnyAction> = useDispatch();
+  const dispatch: ThunkDispatch<any, void, AnyAction> = useDispatch();
 
   useEffect(() => {
-    // dispatch the fetchUser async thunk on mount
     dispatch(fetchUser());
   }, [dispatch]);
   return (

@@ -1,14 +1,22 @@
 import { useMutation } from "@apollo/client";
 import { Button, TextField, Link as MuiLink } from "@mui/material";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ADD_USER } from "../../mutations/userMutations";
+import { useSelector } from "react-redux";
 
 interface FormType {
   type: "user" | "admin";
 }
 
 const SignupForm: React.FC<FormType> = ({ type }) => {
+  const navigate = useNavigate();
+  const user = useSelector((state: any) => state.auth.user);
+
+  if (user) {
+    navigate("/");
+  }
+
   const [name, setName] = useState("");
   const [nameErrored, setNameErrored] = useState(false);
 
@@ -41,7 +49,7 @@ const SignupForm: React.FC<FormType> = ({ type }) => {
 
     // Call the mutation to add the user
     try {
-      const result = await addUser({
+      await addUser({
         variables: {
           name: name,
           login: login,
@@ -49,7 +57,7 @@ const SignupForm: React.FC<FormType> = ({ type }) => {
           admin: type === "admin",
         },
       });
-      console.log(result.data);
+      navigate("/login");
     } catch (error) {
       console.error(error);
     }

@@ -12,11 +12,12 @@ const GET_BOOK = gql`
 `;
 
 const GET_BOOKS = gql`
-  query getBooks {
+  query getAllBooks {
     getAllBooks {
       id
       name
-      status
+      isbn
+      author
     }
   }
 `;
@@ -26,14 +27,8 @@ const GET_AVAILABLE_BOOKS = gql`
     getAllAvailableBooks {
       id
       name
-      description
-      status
-      client {
-        id
-        name
-        email
-        phone
-      }
+      isbn
+      author
     }
   }
 `;
