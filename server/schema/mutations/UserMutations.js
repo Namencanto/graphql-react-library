@@ -5,12 +5,13 @@ const {
   GraphQLBoolean,
 } = require("graphql");
 const db = require("../../config/db.js");
-const userType = require("../types/userType.js");
+const UserType = require("../types/userType.js");
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const Joi = require("joi");
+const { GraphQLObjectType } = require("graphql");
 
 const userSchema = Joi.object({
   login: Joi.string().alphanum().min(3).max(30).required(),
@@ -50,7 +51,7 @@ const userMutations = {
   fields: {
     // Add a user
     addUser: {
-      type: userType,
+      type: UserType,
       args: {
         login: { type: GraphQLNonNull(GraphQLString) },
         name: { type: GraphQLNonNull(GraphQLString) },
@@ -90,8 +91,15 @@ const userMutations = {
     },
 
     // Login mutation
-    login: {
-      type: GraphQLString,
+    loginUser: {
+      type: new GraphQLObjectType({
+        name: "UserLogin",
+        fields: () => ({
+          id: { type: GraphQLID },
+          name: { type: GraphQLString },
+          admin: { type: GraphQLBoolean },
+        }),
+      }),
       args: {
         login: { type: GraphQLNonNull(GraphQLString) },
         password: { type: GraphQLNonNull(GraphQLString) },
@@ -112,10 +120,9 @@ const userMutations = {
         if (!validPassword) {
           throw new Error("Invalid login credentials");
         }
-
         // Generate a JWT token
         const token = jwt.sign(
-          { userId: user.id, isAdmin: user.admin },
+          { name: user.name, userId: user.id, isAdmin: user.admin },
           process.env.JWT_SECRET
         );
 
@@ -125,13 +132,17 @@ const userMutations = {
           maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
         });
 
-        return "Successfully logged in";
+        return {
+          id: user.id,
+          name: user.name,
+          admin: user.admin,
+        };
       },
     },
 
     // Edit a user
     editUser: {
-      type: userType,
+      type: UserType,
       args: {
         id: { type: GraphQLNonNull(GraphQLID) },
         login: { type: GraphQLString },
@@ -206,7 +217,7 @@ const userMutations = {
 
     // Delete a user
     deleteUser: {
-      type: userType,
+      type: UserType,
       args: {
         id: { type: GraphQLNonNull(GraphQLID) },
         password: { type: GraphQLNonNull(GraphQLString) },

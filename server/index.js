@@ -4,13 +4,21 @@ const cors = require("cors");
 const { graphqlHTTP } = require("express-graphql");
 require("dotenv").config();
 const schema = require("./schema/schema.js");
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3001;
 const db = require("./config/db.js");
 const cookieParser = require("cookie-parser");
 
 const dotenv = require("dotenv");
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+
 app.use(cookieParser());
 dotenv.config();
 // Connect to pg database
@@ -24,8 +32,6 @@ db.connect((err) => {
     console.log(`PostgreSQL Connected`.cyan.underline.bold);
   }
 });
-
-app.use(cors());
 
 app.use(
   "/graphql",

@@ -5,7 +5,30 @@ const BookType = require("../types/bookType.js");
 
 const BookQueries = {
   fields: {
-    displayAllBooks: {
+    getBook: {
+      type: BookType,
+      args: { id: { type: GraphQLID } },
+      async resolve(parent, { id }, context) {
+        // Check if user is authenticated
+        const jwtToken = context.req.cookies.jwt;
+        if (!jwtToken) {
+          throw new Error("Authentication required");
+        }
+
+        // Get book by ID from the database
+        const bookQuery = {
+          text: "SELECT * FROM library.books WHERE id = $1",
+          values: [id],
+        };
+        const { rows } = await db.query(bookQuery);
+        const book = rows[0];
+
+        // Return book
+        return book;
+      },
+    },
+
+    getAllBooks: {
       type: new GraphQLList(BookType),
       async resolve(parent, args, context) {
         // Check if user is authenticated
@@ -21,7 +44,8 @@ const BookQueries = {
         return rows;
       },
     },
-    displayAllAvailableBooks: {
+
+    getAllAvailableBooks: {
       type: new GraphQLList(BookType),
       async resolve(parent, args, context) {
         const jwtToken = context.req.cookies.jwt;
