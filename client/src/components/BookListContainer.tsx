@@ -1,7 +1,8 @@
-import React from "react";
-import { useQuery } from "@apollo/client";
-import { GET_AVAILABLE_BOOKS, GET_BOOKS } from "../queries/bookQueries";
+import React, { useEffect, useState } from "react";
 import BookList from "./BookList";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
+import { useDispatch, useSelector } from "react-redux";
+import { BooksState, fetchBooks } from "../features/books/booksSlice";
 
 interface Props {
   userId?: number;
@@ -9,17 +10,29 @@ interface Props {
 }
 
 const BookListContainer: React.FC<Props> = ({ userId, availableOnly }) => {
-  const query = availableOnly ? GET_BOOKS : GET_AVAILABLE_BOOKS;
-  const variables = userId ? { userId } : {};
+  const dispatch: ThunkDispatch<BooksState, void, AnyAction> = useDispatch();
 
-  const { loading, error, data } = useQuery(query, {
-    variables,
-  });
+  const { books, loading, error } = useSelector(
+    (state: { books: BooksState }) => state.books
+  );
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :(</p>;
+  useEffect(() => {
+    if (books.length === 0) dispatch(fetchBooks());
+  }, [books, dispatch]);
+  console.log(books);
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
-  return <BookList books={data.getAllBooks} />;
+  if (error) {
+    return <p>Error :(</p>;
+  }
+
+  if (!books || books.length === 0) {
+    return <p>No books available.</p>;
+  }
+
+  return <BookList books={books} />;
 };
 
 export default BookListContainer;

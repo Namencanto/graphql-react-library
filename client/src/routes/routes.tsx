@@ -7,6 +7,7 @@ import AdminSignupPage from "../pages/admin-signup";
 import IndexPage from "../pages";
 import NotFoundPage from "../pages/NotFound";
 import BooksAddPage from "../pages/books-add";
+import BooksEditPage from "../pages/books-edit";
 
 const Routes: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const Routes: React.FC = () => {
       <Route path="admin-signup" element={<AdminSignupPage />} />
 
       <Route path="books-add" element={<BooksAddPage />} />
+      <Route path="books-edit/:id" element={<BooksEditPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </ReactRouterRoutes>
   );

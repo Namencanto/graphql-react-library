@@ -18,6 +18,9 @@ const GET_BOOKS = gql`
       name
       isbn
       author
+      borrowedBy {
+        name
+      }
     }
   }
 `;

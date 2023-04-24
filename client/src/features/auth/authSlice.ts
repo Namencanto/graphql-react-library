@@ -4,7 +4,7 @@ import { VERIFY_USER } from "../../queries/userQueries";
 import { client } from "../../App";
 import { LOGOUT_USER } from "../../mutations/userMutations";
 
-interface AuthState {
+export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;

@@ -19,7 +19,7 @@ const BookType = new GraphQLObjectType({
           return null;
         }
         const UserQuery = {
-          text: "SELECT * FROM Users WHERE id = $1",
+          text: "SELECT * FROM library.users WHERE id = $1",
           values: [parent.borrowed_by],
         };
         const { rows } = await db.query(UserQuery);

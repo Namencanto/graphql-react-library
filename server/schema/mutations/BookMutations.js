@@ -61,13 +61,23 @@ const BookMutations = {
           throw new Error("You do not have permission to add books");
         }
 
+        // Check if a book with the same name or ISBN already exists
+        const existingBookQuery = {
+          text: "SELECT * FROM library.books WHERE name = $1 OR isbn = $2",
+          values: [name, isbn],
+        };
+        const book = await db.query(existingBookQuery);
+        if (book.rows.length > 0) {
+          throw new Error("Book already exists");
+        }
+
         // Insert new book into the database
         const bookQuery = {
           text: "INSERT INTO library.books (name, isbn, author, borrowed_by) VALUES ($1, $2, $3, $4) RETURNING *",
           values: [name, isbn, author, 0],
         };
-        const { rows } = await db.query(bookQuery);
 
+        const { rows } = await db.query(bookQuery);
         // Return newly created book
         return rows[0];
       },
