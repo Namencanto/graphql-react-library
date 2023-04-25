@@ -143,6 +143,7 @@ const BookMutations = {
         borrowed_by: { type: GraphQLInt },
       },
       async resolve(parent, { id, name, isbn, author, borrowed_by }, context) {
+        console.log("rows");
         // Check if user is authenticated and is an admin
         const jwtToken = context.req.cookies.jwt;
         if (!jwtToken) {
@@ -184,6 +185,8 @@ const BookMutations = {
           values.push(name);
         }
         if (isbn !== undefined) {
+          if (isbn.length !== 13)
+            throw new Error("ISBN must contain exactly 13 characters");
           updateFields.push(`isbn = $${updateFields.length + 2}`);
           values.push(isbn);
         }

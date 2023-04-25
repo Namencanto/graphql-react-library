@@ -120,7 +120,7 @@ const SignupForm: React.FC<FormType> = ({ type }) => {
       >
         <span className="p-1">{loading ? "Loading..." : "Sign Up"}</span>
       </Button>
-      {error && <p>{error.message}</p>}
+      {error && <p className="text-red-400">{error.message}</p>}
     </div>
   );
 };

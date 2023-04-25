@@ -212,6 +212,18 @@ export const booksSlice = createSlice({
       .addCase(deleteBook.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message ?? "Something went wrong...";
+      })
+      .addCase(editBook.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(editBook.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(editBook.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? "Something went wrong...";
       });
   },
 });

@@ -1,38 +1,35 @@
-# GraphQL Project - Simple Projects and Users
+# **Librarium** GraphQL React Library :books:
 
-This Project allows creating, reading, updating, and deleting simple projects and users using GraphQL.
+This project is a library management system built with Express.js, Node.js, GraphQL, React, Apollo, and Redux Toolkit. The system has an admin panel for adding, editing, and deleting books, user management with CRUD operations, and the ability for users to borrow and return books.
 
-## Schema
+## **Live Website** :globe_with_meridians:
 
-### Types
+### [https://graphql-react-library.onrender.com/](https://graphql-react-library.onrender.com/)
 
-- `Project`
-- `Client`
+## Features
 
-### Root Queries
+- User authentication and authorization with JWT
+- Admin panel for managing books
+- User management with CRUD operations
+- Borrow and return books logic
 
-- `projects`
-- `project`
-- `clients`
-- `client`
+## Technologies
 
-### Mutations
+- Frontend: React, Apollo Client, Redux Toolkit
+- Backend: Express.js, Node.js, GraphQL, PostgreSQL
 
-- `addClient`
-- `deleteClient`
-- `addProject`
-- `deleteProject`
-- `updateProject`
+## Getting Started
 
-## Usage
-
-1. Install dependencies: `npm install`
-2. Run the server: `npm run start`
-3. In your browser, go to http://localhost:5000/graphql to use the GraphQL API interface.
-
-To run the client:
-
-1. Navigate to the client folder: `cd client`
+1. Clone or download the repository
 2. Install dependencies: `npm install`
-3. Start the client: `npm run start`
-4. In your browser, go to http://localhost:3000 to use API in UI.
+3. Navigate to the client directory and build the frontend: `cd client npm run build`
+4. Navigate back to the root directory and start the server: `npm run start`
+5. Open a web browser and go to `http://localhost:3000` to see the app in action!
+
+## Book Management
+
+Books can be managed through the admin panel. Each book has the following properties:
+
+- Name
+- Author
+- ISBN
