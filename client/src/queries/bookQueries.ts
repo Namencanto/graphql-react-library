@@ -19,6 +19,7 @@ const GET_BOOKS = gql`
       isbn
       author
       borrowedBy {
+        id
         name
       }
     }

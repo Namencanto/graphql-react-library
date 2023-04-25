@@ -8,8 +8,12 @@ import IndexPage from "../pages";
 import NotFoundPage from "../pages/NotFound";
 import BooksAddPage from "../pages/books-add";
 import BooksEditPage from "../pages/books-edit";
+import SettingsPage from "../pages/settings";
+import { useSelector } from "react-redux";
 
 const Routes: React.FC = () => {
+  const user = useSelector((state: any) => state.auth.user);
+
   return (
     <ReactRouterRoutes>
       <Route path="/" element={<IndexPage />} />
@@ -18,8 +22,13 @@ const Routes: React.FC = () => {
       <Route path="admin-login" element={<AdminLoginPage />} />
       <Route path="admin-signup" element={<AdminSignupPage />} />
 
-      <Route path="books-add" element={<BooksAddPage />} />
-      <Route path="books-edit/:id" element={<BooksEditPage />} />
+      {user && (
+        <>
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="books-add" element={<BooksAddPage />} />
+          <Route path="books-edit/:id" element={<BooksEditPage />} />
+        </>
+      )}
       <Route path="*" element={<NotFoundPage />} />
     </ReactRouterRoutes>
   );

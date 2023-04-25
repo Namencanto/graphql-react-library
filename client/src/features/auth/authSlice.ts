@@ -2,7 +2,11 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../../types/User";
 import { VERIFY_USER } from "../../queries/userQueries";
 import { client } from "../../App";
-import { LOGOUT_USER } from "../../mutations/userMutations";
+import {
+  DELETE_USER,
+  LOGOUT_USER,
+  UPDATE_USER,
+} from "../../mutations/userMutations";
 
 export interface AuthState {
   user: User | null;
@@ -29,12 +33,60 @@ export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
 
 export const fetchUser = createAsyncThunk("auth/fetchUser", async () => {
   try {
-    const { data } = await client.query({ query: VERIFY_USER });
+    const { data } = await client.query({
+      query: VERIFY_USER,
+      fetchPolicy: "network-only",
+    });
     return data.verifyUser;
   } catch (error) {
     throw new Error("Something went wrong...");
   }
 });
+
+export const deleteUser = createAsyncThunk(
+  "auth/deleteUser",
+  async (user: { password: string }, thunkAPI) => {
+    try {
+      await client.mutate({
+        mutation: DELETE_USER,
+        variables: {
+          password: user.password,
+        },
+      });
+      return await thunkAPI.dispatch(logoutUser());
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async (
+    user: {
+      login: string;
+      name: string;
+      password: string;
+      newPassword: string;
+    },
+    thunkAPI
+  ) => {
+    try {
+      await client.mutate({
+        mutation: UPDATE_USER,
+        variables: {
+          login: user.login,
+          name: user.name,
+          password: user.password,
+          newPassword: user.newPassword,
+        },
+      });
+      return await thunkAPI.dispatch(fetchUser());
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -73,13 +125,31 @@ const authSlice = createSlice({
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = "Something went wrong...";
+        state.error = action.error.message ?? "Something went wrong...";
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
         state.loading = false;
         state.error = null;
+      })
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? "Something went wrong...";
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateUser.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? "Something went wrong...";
       });
   },
 });

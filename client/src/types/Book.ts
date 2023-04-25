@@ -3,5 +3,5 @@ export interface Book {
   isbn: number;
   name: string;
   author: string;
-  borrowedBy: { name: string } | null;
+  borrowedBy: { name: string; id: number } | null;
 }

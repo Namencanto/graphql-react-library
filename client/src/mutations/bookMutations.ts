@@ -7,30 +7,72 @@ const ADD_BOOK = gql`
       name
       isbn
       author
+      borrowedBy {
+        id
+        name
+      }
     }
   }
 `;
 
-const GET_BOOKS = gql`
-  mutation addClient($name: String!, $email: String!, $phone: String!) {
-    addClient(name: $name, email: $email, phone: $phone) {
+const UPDATE_BOOK = gql`
+  mutation updateBook($id: ID!, $name: String, $isbn: Int, $author: String) {
+    updateBook(id: $id, name: $name, isbn: $isbn, author: $author) {
       id
       name
-      email
-      phone
+      isbn
+      author
+      borrowedBy {
+        id
+        name
+      }
     }
   }
 `;
 
-const GET_AVAILABLE_BOOKS = gql`
-  mutation deleteClient($id: ID!) {
-    deleteClient(id: $id) {
+const DELETE_BOOK = gql`
+  mutation deleteBook($id: ID!) {
+    deleteBook(id: $id) {
       id
       name
-      email
-      phone
+      isbn
+      author
+      borrowedBy {
+        id
+        name
+      }
     }
   }
 `;
 
-export { ADD_BOOK, GET_BOOKS, GET_AVAILABLE_BOOKS };
+const BORROW_BOOK = gql`
+  mutation borrowBook($id: ID!) {
+    borrowBook(id: $id) {
+      id
+      name
+      isbn
+      author
+      borrowedBy {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const RETURN_BOOK = gql`
+  mutation returnBook($id: ID!) {
+    returnBook(id: $id) {
+      id
+      name
+      isbn
+      author
+      borrowedBy {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export { ADD_BOOK, UPDATE_BOOK, DELETE_BOOK, BORROW_BOOK, RETURN_BOOK };

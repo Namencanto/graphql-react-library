@@ -21,7 +21,8 @@
     "graphql": "^15.8.0",
     "joi": "^17.9.1",
     "jsonwebtoken": "^9.0.0",
-    "pg": "^8.10.0"
+    "pg": "^8.10.0",
+    "pg-connection-string": "^2.5.0"
   },
   "devDependencies": {
     "dotenv": "^16.0.3",

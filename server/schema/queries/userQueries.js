@@ -25,7 +25,6 @@ const UserQueries = {
     verifyUser: {
       type: UserType,
       async resolve(parent, args, context) {
-        console.log("asfasf");
         const token = context.req.cookies.jwt;
         if (!token) {
           return null;

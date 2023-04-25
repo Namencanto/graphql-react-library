@@ -1,7 +1,9 @@
 import { Link as RouterLink } from "react-router-dom";
 import { Box, Typography, Link } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const NotFoundPage = () => {
+  const user = useSelector((state: any) => state.auth.user);
   return (
     <Box
       sx={{
@@ -19,8 +21,8 @@ const NotFoundPage = () => {
         The page you are looking for might have been removed or is temporarily
         unavailable.
       </Typography>
-      <Link component={RouterLink} to="/" sx={{ mt: 2 }}>
-        Go back to home
+      <Link component={RouterLink} to={user ? "/" : "/login"} sx={{ mt: 2 }}>
+        Go back to {user ? "dashboard" : "login"}
       </Link>
     </Box>
   );

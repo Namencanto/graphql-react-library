@@ -32,8 +32,8 @@ const userSchema = Joi.object({
 });
 
 const userSchemaEdit = Joi.object({
-  login: Joi.string().alphanum().min(3).max(30),
-  name: Joi.string().min(3).max(30),
+  login: Joi.string().alphanum().min(3).max(30).optional(),
+  name: Joi.string().min(3).max(30).optional(),
   newPassword: Joi.string()
     .min(8)
     .pattern(
@@ -41,6 +41,7 @@ const userSchemaEdit = Joi.object({
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
       )
     )
+    .optional()
     .messages({
       "string.pattern.base":
         "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&)",
@@ -146,23 +147,25 @@ const userMutations = {
       },
     },
 
-    // Edit a user
-    editUser: {
+    // Update a user
+    updateUser: {
       type: UserType,
       args: {
-        id: { type: GraphQLNonNull(GraphQLID) },
         login: { type: GraphQLString },
         name: { type: GraphQLString },
         password: { type: GraphQLNonNull(GraphQLString) },
         newPassword: { type: GraphQLString },
       },
-      async resolve(
-        parent,
-        { id, login, name, password, newPassword },
-        context
-      ) {
+      async resolve(parent, { login, name, password, newPassword }, context) {
         // Validate credentials
-        const { error } = userSchemaEdit.validate({ login, name, newPassword });
+        if (login.length === 0 && name.length === 0 && newPassword.length === 0)
+          throw new Error("At least one field must be provided to update");
+
+        const { error } = userSchemaEdit.validate({
+          login: login.length > 0 ? login : undefined,
+          name: name.length > 0 ? name : undefined,
+          newPassword: newPassword.length > 0 ? newPassword : undefined,
+        });
         if (error) {
           throw new Error(error.message);
         }
@@ -184,7 +187,7 @@ const userMutations = {
         // Check if user exists
         const res = await db.query(
           "SELECT * FROM library.users WHERE id = $1",
-          [id]
+          [userId]
         );
 
         const user = res.rows[0];
@@ -197,10 +200,6 @@ const userMutations = {
         if (!validPassword) {
           throw new Error("Invalid login credentials");
         }
-        // Check if the authenticated user is the same as the user being edited
-        if (userId != id) {
-          throw new Error("You do not have permission to edit this user");
-        }
 
         // Hash the new password if provided
         let hash;
@@ -212,7 +211,7 @@ const userMutations = {
         // Update the user in the database
         const userQuery = {
           text: "UPDATE library.users SET login = COALESCE($1, login), name = COALESCE($2, name), password = COALESCE($3, password) WHERE id = $4 RETURNING *",
-          values: [login, name, hash || user.password, id],
+          values: [login, name, hash || user.password, userId],
         };
         const { rows } = await db.query(userQuery);
 
@@ -225,10 +224,9 @@ const userMutations = {
     deleteUser: {
       type: UserType,
       args: {
-        id: { type: GraphQLNonNull(GraphQLID) },
         password: { type: GraphQLNonNull(GraphQLString) },
       },
-      async resolve(parent, { id, password }, context) {
+      async resolve(parent, { password }, context) {
         // Check if user is authenticated
         const jwtToken = context.req.cookies.jwt;
         if (!jwtToken) {
@@ -243,15 +241,10 @@ const userMutations = {
         }
         const userId = decodedToken.userId;
 
-        // Check if the authenticated user is the same as the user being deleted
-        if (userId != id) {
-          throw new Error("You do not have permission to delete this user");
-        }
-
         // Check if user exists
         const res = await db.query(
           "SELECT * FROM library.users WHERE id = $1",
-          [id]
+          [userId]
         );
 
         const user = res.rows[0];
@@ -263,15 +256,20 @@ const userMutations = {
         const validPassword = bcrypt.compareSync(password, user.password);
 
         if (!validPassword) {
-          throw new Error("Invalid login credentials");
+          throw new Error("Invalid password");
         }
+        // Delete user
+        await db.query("DELETE FROM library.users WHERE id = $1 RETURNING *", [
+          userId,
+        ]);
 
-        const deletedUser = await db.query(
-          "DELETE FROM library.users WHERE id = $1 RETURNING *",
-          [id]
+        // Update all books borrowed by the user being deleted
+        await db.query(
+          "UPDATE library.books SET borrowed_by = 0 WHERE borrowed_by = $1",
+          [userId]
         );
 
-        return deletedUser.rows[0];
+        return "Successfully deleted account";
       },
     },
 

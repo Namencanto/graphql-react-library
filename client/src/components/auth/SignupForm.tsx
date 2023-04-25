@@ -98,7 +98,10 @@ const SignupForm: React.FC<FormType> = ({ type }) => {
           error={passwordErrored}
         />
         <div className="flex">
-          <Link to="/login" className="justify-self-start self-start mt-2 pr-4">
+          <Link
+            to={`/${type === "admin" ? "admin-" : ""}login`}
+            className="justify-self-start self-start mt-2 pr-4"
+          >
             <MuiLink>Login</MuiLink>
           </Link>
           <Link

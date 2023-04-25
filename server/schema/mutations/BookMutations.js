@@ -13,7 +13,7 @@ const Joi = require("joi");
 
 const addBookSchema = Joi.object({
   name: Joi.string().required(),
-  isbn: Joi.string().max(13).required(),
+  isbn: Joi.string().length(13).required(),
   author: Joi.string().required(),
 });
 
@@ -87,7 +87,7 @@ const BookMutations = {
     deleteBook: {
       type: BookType,
       args: {
-        id: { type: GraphQLNonNull(GraphQLInt) },
+        id: { type: GraphQLNonNull(GraphQLID) },
       },
       async resolve(parent, { id }, context) {
         // Check if user is authenticated and is an admin
@@ -138,7 +138,7 @@ const BookMutations = {
       args: {
         id: { type: GraphQLNonNull(GraphQLID) },
         name: { type: GraphQLString },
-        isbn: { type: GraphQLString },
+        isbn: { type: GraphQLInt },
         author: { type: GraphQLString },
         borrowed_by: { type: GraphQLInt },
       },
@@ -217,9 +217,9 @@ const BookMutations = {
     borrowBook: {
       type: BookType,
       args: {
-        bookId: { type: GraphQLNonNull(GraphQLID) },
+        id: { type: GraphQLNonNull(GraphQLID) },
       },
-      async resolve(parent, { bookId }, context) {
+      async resolve(parent, { id }, context) {
         // Check if user is authenticated
         const jwtToken = context.req.cookies.jwt;
         if (!jwtToken) {
@@ -245,7 +245,7 @@ const BookMutations = {
         // Check if the book exists
         const book = await db.query(
           "SELECT * FROM library.books WHERE id = $1",
-          [bookId]
+          [id]
         );
         if (book.rows.length === 0) {
           throw new Error("Book not found");
@@ -263,7 +263,7 @@ const BookMutations = {
         // Update the book to mark it as borrowed
         const borrowQuery = {
           text: "UPDATE library.books SET borrowed_by = $1 WHERE id = $2 RETURNING *",
-          values: [userId, bookId],
+          values: [userId, id],
         };
         const { rows } = await db.query(borrowQuery);
 

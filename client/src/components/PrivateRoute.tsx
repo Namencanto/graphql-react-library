@@ -13,7 +13,6 @@ export default function PrivateRoute({
   ...props
 }: PrivateRouteProps) {
   const user = useSelector((state: any) => state.auth.user);
-  console.log(user);
 
   const [isLoading, setIsLoading] = useState(true);
 

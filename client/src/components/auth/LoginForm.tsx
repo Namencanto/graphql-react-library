@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { LOGIN_USER } from "../../mutations/userMutations";
 import { setUser } from "../../features/auth/authSlice";
 import { useSelector } from "react-redux";
+import LoadingSpinner from "../LoadingSpinner";
 
 interface FormType {
   type: "user" | "admin";
@@ -13,9 +14,9 @@ interface FormType {
 
 const LoginForm: React.FC<FormType> = ({ type }) => {
   const navigate = useNavigate();
-  const user = useSelector((state: any) => state.auth.user);
+  const { user, loading: isLoading } = useSelector((state: any) => state.auth);
 
-  if (user) {
+  if (user && !isLoading) {
     navigate("/");
   }
 
@@ -25,6 +26,10 @@ const LoginForm: React.FC<FormType> = ({ type }) => {
   const [password, setPassword] = useState("");
   const [passwordErrored, setPasswordErrored] = useState(false);
   const [loginUser, { loading, error }] = useMutation(LOGIN_USER);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   const handleLogin = async () => {
     if (!login) {
@@ -45,7 +50,6 @@ const LoginForm: React.FC<FormType> = ({ type }) => {
 
       if (data) {
         dispatch(setUser(data.loginUser));
-        console.log(data.loginUser);
         navigate("/");
       }
     } catch (error) {
@@ -79,7 +83,7 @@ const LoginForm: React.FC<FormType> = ({ type }) => {
 
         <div className="flex">
           <Link
-            to="/signup"
+            to={`/${type === "admin" ? "admin-" : ""}signup`}
             className="justify-self-start self-start mt-2 pr-4"
           >
             <MuiLink>Sign Up</MuiLink>

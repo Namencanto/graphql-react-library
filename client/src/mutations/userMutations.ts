@@ -16,13 +16,27 @@ const ADD_USER = gql`
   }
 `;
 
-const DELETE_CLIENT = gql`
-  mutation deleteClient($id: ID!) {
-    deleteClient(id: $id) {
+const DELETE_USER = gql`
+  mutation deleteUser($password: String!) {
+    deleteUser(password: $password) {
       id
-      name
-      email
-      phone
+    }
+  }
+`;
+const UPDATE_USER = gql`
+  mutation updateUser(
+    $login: String!
+    $name: String!
+    $password: String!
+    $newPassword: String!
+  ) {
+    updateUser(
+      login: $login
+      name: $name
+      password: $password
+      newPassword: $newPassword
+    ) {
+      id
     }
   }
 `;
@@ -43,4 +57,4 @@ const LOGIN_USER = gql`
   }
 `;
 
-export { ADD_USER, DELETE_CLIENT, LOGIN_USER, LOGOUT_USER };
+export { ADD_USER, DELETE_USER, UPDATE_USER, LOGIN_USER, LOGOUT_USER };

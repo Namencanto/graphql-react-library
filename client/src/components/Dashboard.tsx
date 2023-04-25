@@ -15,8 +15,7 @@ const Dashboard = () => {
     user && (
       <>
         <Header username={user.name} admin={user.admin} />
-        <BookListContainer userId={user.id} availableOnly={false} />
-        {/* <BookListContainer availableOnly={true} /> */}
+        <BookListContainer />
       </>
     )
   );
