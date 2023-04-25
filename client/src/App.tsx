@@ -30,7 +30,9 @@ const cache = new InMemoryCache({
 });
 
 export const client = new ApolloClient({
-  uri: process.env.REACT_APP_GRAPHQL_URL,
+  uri:
+    process.env.REACT_APP_GRAPHQL_URL ||
+    "https://graphql-react-library.onrender.com/graphql",
   cache,
   credentials: "include",
 });
@@ -40,7 +42,7 @@ const darkTheme = createTheme({
     mode: "dark",
   },
 });
-console.log(process.env.REACT_APP_GRAPHQL_URL);
+
 function App() {
   const dispatch: ThunkDispatch<any, void, AnyAction> = useDispatch();
 

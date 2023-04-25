@@ -16,7 +16,8 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.APP_URL,
+    origin:
+      process.env.APP_URL || "https://graphql-react-library.onrender.com/",
     credentials: true,
   })
 );
