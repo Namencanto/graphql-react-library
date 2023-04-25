@@ -16,7 +16,7 @@ const ADD_BOOK = gql`
 `;
 
 const UPDATE_BOOK = gql`
-  mutation updateBook($id: ID!, $name: String, $isbn: Int, $author: String) {
+  mutation updateBook($id: ID!, $name: String, $isbn: String, $author: String) {
     updateBook(id: $id, name: $name, isbn: $isbn, author: $author) {
       id
       name

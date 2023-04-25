@@ -65,24 +65,26 @@ export const editBook = createAsyncThunk(
       id: number;
       name: string;
       author: string;
-      isbn: number;
+      isbn: string;
     },
     thunkAPI
   ) => {
     try {
-      await client.mutate({
+      console.log("first");
+      const resultEdit = await client.mutate({
         mutation: UPDATE_BOOK,
         variables: {
-          id: editedBook.id,
+          id: +editedBook.id,
           name: editedBook.name,
           author: editedBook.author,
           isbn: editedBook.isbn,
         },
       });
 
-      const res = await thunkAPI.dispatch(fetchBooks());
-
-      return res.payload;
+      if (resultEdit) {
+        const res = await thunkAPI.dispatch(fetchBooks());
+        return res.payload;
+      }
     } catch (error: any) {
       throw new Error(error.message);
     }

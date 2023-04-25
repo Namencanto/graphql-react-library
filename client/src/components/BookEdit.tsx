@@ -12,7 +12,7 @@ const BookEdit = (book: any) => {
   const { id } = useParams<{ id: string }>();
   const [name, setName] = useState(book.book.name);
   const [author, setAuthor] = useState(book.book.author);
-  const [isbn, setIsbn] = useState<number>(+book.book.isbn);
+  const [isbn, setIsbn] = useState(book.book.isbn);
   const { loading, error, books } = useSelector(
     (state: { books: BooksState }) => state.books
   );
@@ -21,7 +21,7 @@ const BookEdit = (book: any) => {
     return (
       name !== book.book.name ||
       author !== book.book.author ||
-      isbn !== +book.book.isbn
+      isbn !== book.book.isbn
     );
   }, [name, author, isbn, book]);
 
@@ -51,7 +51,7 @@ const BookEdit = (book: any) => {
           id: +id,
           name,
           author,
-          isbn,
+          isbn: isbn.toString(),
         })
       );
 

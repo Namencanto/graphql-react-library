@@ -138,12 +138,11 @@ const BookMutations = {
       args: {
         id: { type: GraphQLNonNull(GraphQLID) },
         name: { type: GraphQLString },
-        isbn: { type: GraphQLInt },
+        isbn: { type: GraphQLString },
         author: { type: GraphQLString },
         borrowed_by: { type: GraphQLInt },
       },
       async resolve(parent, { id, name, isbn, author, borrowed_by }, context) {
-        console.log("rows");
         // Check if user is authenticated and is an admin
         const jwtToken = context.req.cookies.jwt;
         if (!jwtToken) {
